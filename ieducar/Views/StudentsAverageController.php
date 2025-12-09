@@ -35,7 +35,7 @@ class StudentsAverageController extends Portabilis_Controller_ReportCoreControll
         $this->inputsHelper()->dynamic('curso', ['required' => false]);
         $this->inputsHelper()->dynamic('serie', ['required' => false]);
         $this->inputsHelper()->dynamic('turma', ['required' => false]);
-        $this->inputsHelper()->dynamic('etapa', ['required' => false]);
+        $this->inputsHelper()->dynamic('etapa', ['required' => false, 'multiple' => true]);
         $this->inputsHelper()->text('limite', ['required' => false, 'label' => 'Limite de posições', 'size' => 5, 'max_length' => 7, 'placeholder' => ' ']);
     }
 
@@ -50,7 +50,18 @@ class StudentsAverageController extends Portabilis_Controller_ReportCoreControll
         $this->report->addArg('curso', (int) $this->getRequest()->ref_cod_curso);
         $this->report->addArg('serie', (int) $this->getRequest()->ref_cod_serie);
         $this->report->addArg('turma', (int) $this->getRequest()->ref_cod_turma);
-        $this->report->addArg('etapa', (int) $this->getRequest()->etapa);
+
+        $etapa = $this->getRequest()->etapa;
+
+        if (is_array($etapa) && count($etapa)) {
+            $etapa = implode(',', array_map(function ($item) {
+                return (int) $item;
+            }, $etapa));
+        } else {
+            $etapa = (int) $etapa;
+        }
+
+        $this->report->addArg('etapa', $etapa);
 
         if ($this->getRequest()->limite == 0 || (is_null($this->getRequest()->limite)) || (is_numeric(!$this->getRequest()->limite))) {
             $this->getRequest()->limite == 1000000;
