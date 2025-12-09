@@ -60,7 +60,7 @@ class StudentsAverageReport extends Portabilis_Report_ReportCore
    inner  join pmieducar.escola_curso on (escola.cod_escola = escola_curso.ref_cod_escola)
    inner  join pmieducar.curso on (escola_curso.ref_cod_curso = curso.cod_curso)
    inner  join pmieducar.serie on (curso.cod_curso = serie.ref_cod_curso)
-   inner  join pmieducar.turma on (turma.ref_ref_cod_serie = serie.cod_serie and turma.ref_ref_cod_escola = escola.cod_escola and curso.cod_curso = turma.ref_cod_curso)
+   inner  join pmieducar.turma on (turma.ref_ref_cod_escola = escola.cod_escola)
    inner  join pmieducar.matricula_turma on (turma.cod_turma = matricula_turma.ref_cod_turma)
    inner  join pmieducar.matricula on (matricula_turma.ref_cod_matricula = matricula.cod_matricula and escola.cod_escola = matricula.ref_ref_cod_escola and matricula.ref_ref_cod_serie = serie.cod_serie)
    inner  join pmieducar.aluno on (matricula.ref_cod_aluno = aluno.cod_aluno)
@@ -85,7 +85,7 @@ class StudentsAverageReport extends Portabilis_Report_ReportCore
      and (CASE WHEN {$curso}  = 0 THEN true ELSE  {$curso} = curso.cod_curso   END)
      and (CASE WHEN {$serie}  = 0 THEN true ELSE {$serie} = serie.cod_serie   END)
      and (CASE WHEN {$turma}  = 0 THEN true ELSE {$turma}  = turma.cod_turma   END)
-     and (CASE WHEN '{$etapa}'  = '0' THEN true ELSE '{$etapa}' = nota_componente_curricular.etapa   END)
+     and (CASE WHEN '{$etapa}'  = '0' THEN true ELSE nota_componente_curricular.etapa IN ({$etapa})   END)
      group by turma.ano, nm_instituicao, nm_curso, nm_serie, nm_turma, escola, pessoa.nome, etapa_case
      order by  media DESC, nome ASC
      LIMIT {$limite}
